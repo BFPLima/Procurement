@@ -1,0 +1,56 @@
+﻿@model Procurement.Model.Entities.Item
+
+@{
+    ViewBag.Title = "Details";
+    IDictionary<string, string> dic = (IDictionary<string, string>)this.ViewBag.FieldAndValues;
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Item</h4>
+    <hr />
+    <dl class="dl-horizontal">
+
+
+        <dt>
+            UNSPSC
+        </dt>
+
+        <dt>
+            Description
+        </dt>
+
+        <dd>
+            @Model.UNSPSC
+        </dd>
+
+        <dd>
+            @Model.Description
+        </dd>
+
+        @{foreach (KeyValuePair<string, string> item in dic)
+            {
+                <dt>
+                    @item.Key
+                </dt>
+
+                <dd>
+                    @item.Value
+                </dd>
+            }
+        }
+
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.ID, page = this.ViewBag.page, idItemType = this.ViewBag.idItemType, pageSiz = this.ViewBag.pageSize }) |
+    @Html.ActionLink("Back to Item List", "Index", new { page = this.ViewBag.page, idItemType = this.ViewBag.idItemType, pageSiz = this.ViewBag.pageSize })
+
+
+</p>
+
+
+
+

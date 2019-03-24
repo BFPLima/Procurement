@@ -1,0 +1,222 @@
+﻿@model PagedList.IPagedList<SupplierOffer>
+@using PagedList.Mvc;
+@using Procurement.Model.Entities;
+
+
+@{
+    ViewBag.Title = "Index";
+    IEnumerable<string> listHeader = (IEnumerable<string>)this.ViewBag.ListHeader;
+    int SupplierID = this.ViewBag.SupplierID;
+    int count = 1;
+}
+
+
+<h2 style="text-align:center;">RELATED ITEMS</h2>
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+
+
+    <table class="table">
+        <tr>
+            <th>
+                @*@Html.DisplayNameFor(model => model.CreatedDate)*@
+
+                <label style="font-size:17px;">Item Type:</label>
+                @Html.DropDownList("ddItemTypes", (SelectList)this.ViewBag.SelectListItemTypes, "Select ...", new { style = "width:200px;height:30px;" })
+                <label style="font-size:17px;">Items per Page:</label>
+                @Html.DropDownList("ddPageSize", (SelectList)this.ViewBag.SelectListPageSize, new { style = "width:200px;height:30px;" })
+
+            </th>
+            <th></th>
+        </tr>
+
+
+    </table>
+
+
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th id="thButtons"></th>
+                <th>UNSPSC</th>
+                <th>Price</th>
+                <th>Provided Date Delivery</th>
+                <th>Description</th>
+                <th id="thButtonEdit"></th>
+
+            </tr>
+        </thead>
+        <tbody>
+
+            @foreach (var offer in Model)
+                {
+                <tr>
+                    <td headers="thButtons">
+                        <span class="button-checkbox">
+                            <button type="button" class="btn" data-color="primary"></button>
+                            <input type="checkbox" class="hidden" name="item_@offer.Item.ID" checked />
+                        </span>
+                    </td>
+
+                    <td>
+                        @offer.Item.UNSPSC
+                    </td>
+                    <td>
+                        @offer.Price
+                    </td>
+                    <td>
+                        @offer.ProvidedDateDelivery.ToShortDateString()
+                    </td>
+                    <td>
+                        @offer.Description
+                    </td>
+                    <td headers="thButtonEdit">
+                        <span class="button-checkbox">
+                            <button type="button" class="btn btn-info btn-edit" data-id="@offer.ID">Edit</button>
+                        </span>
+                    </td>
+
+                </tr>
+            }
+
+        </tbody>
+
+    </table>
+
+    <p>
+        <button type="submit" class="btn btn-primary">Save</button>
+    </p>
+}
+
+<br />
+
+
+    Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+
+
+    @Html.PagedListPager(Model, page => Url.Action("Offers", new { id = SupplierID, @page = page, idItemType = this.ViewBag.IDItemType }))
+
+
+
+
+
+    <script>
+        $(function () {
+            $("#ddItemTypes").change(function () {
+                fireByDropDown();
+            });
+
+
+            $("#ddPageSize").change(function () {
+                fireByDropDown();
+            });
+        });
+
+
+
+
+        function fireByDropDown() {
+
+            var itemTypeID = $("#ddItemTypes").val();
+            var pageSize = $("#ddPageSize").val();
+            var id = @{@SupplierID};
+
+            window.location = '/Supplier/Offers?id=' + id +'&page=@{@Model.PageNumber}&idItemType=' + itemTypeID + '&pageSize=' + pageSize;
+        }
+    </script>
+
+
+    <script>
+
+
+        $(function () {
+            $('.button-checkbox').each(function () {
+
+                // Settings
+                var $widget = $(this),
+                    $button = $widget.find('button'),
+                    $checkbox = $widget.find('input:checkbox'),
+                    color = $button.data('color'),
+                    settings = {
+                        on: {
+                            icon: 'glyphicon glyphicon-check'
+                        },
+                        off: {
+                            icon: 'glyphicon glyphicon-unchecked'
+                        }
+                    };
+
+                // Event Handlers
+                $button.on('click', function () {
+                    $checkbox.prop('checked', !$checkbox.is(':checked'));
+                    $checkbox.triggerHandler('change');
+                    updateDisplay();
+                });
+                $checkbox.on('change', function () {
+                    updateDisplay();
+                });
+
+                // Actions
+                function updateDisplay() {
+                    var isChecked = $checkbox.is(':checked');
+
+                    // Set the button's state
+                    $button.data('state', (isChecked) ? "on" : "off");
+
+                    // Set the button's icon
+                    $button.find('.state-icon')
+                        .removeClass()
+                        .addClass('state-icon ' + settings[$button.data('state')].icon);
+
+                    // Update the button's color
+                    if (isChecked) {
+                        $button
+                            .removeClass('btn-default')
+                            .addClass('btn-' + color + ' active');
+                    }
+                    else {
+                        $button
+                            .removeClass('btn-' + color + ' active')
+                            .addClass('btn-default');
+                    }
+                }
+
+                // Initialization
+                function init() {
+
+                    updateDisplay();
+
+                    // Inject the icon if applicable
+                    if ($button.find('.state-icon').length == 0) {
+                        $button.prepend('<i class="state-icon ' + settings[$button.data('state')].icon + '"></i> ');
+                    }
+                }
+                init();
+            });
+        });
+
+    </script>
+
+
+    <script>
+        $(function () {
+            $(".btn-edit").click(function () {
+                var id = $(this).attr("data-id");
+                var itemTypeID = $("#ddItemTypes").val();
+                var pageSize = $("#ddPageSize").val();
+
+                var userID = @{@SupplierID};
+
+                window.location = '/Supplier/OfferEdit?id=' + id + '&userID=' + userID +'&page=@{@Model.PageNumber}&idItemType=' + itemTypeID + '&pageSize=' + pageSize;
+
+            });
+
+        });
+    </script>
+
+

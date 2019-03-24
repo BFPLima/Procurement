@@ -1,0 +1,60 @@
+﻿@model Procurement.Model.Entities.Item
+
+@{
+    ViewBag.Title = "Edit";
+    IDictionary<string, string> dic = (IDictionary<string, string>)this.ViewBag.FieldAndValues;
+}
+
+<h2>Edit</h2>
+
+@using (Html.BeginForm("Edit","Item", new { page = this.ViewBag.page, idItemType = this.ViewBag.idItemType, pageSiz = this.ViewBag.pageSize }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <h4>Item</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.ID)
+
+
+        <div class="form-group">
+            <label class="control-label col-md-2">UNSPSC</label>
+            <div class="col-md-10">
+                <input type="text" id="UNSPSC" name="UNSPSC" value="@Model.UNSPSC" disabled />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2">Description</label>
+            <div class="col-md-10">
+                <input type="text" id="Description" name="Description" value="@Model.Description" disabled />
+            </div>
+        </div>
+
+     
+
+        @{foreach (KeyValuePair<string, string> item in dic)
+            {
+                <div class="form-group">
+                    <label class="control-label col-md-2">@item.Key</label>
+                    <div class="col-md-10">
+                        <input type="text" id="@item.Key" name="@item.Key" value="@item.Value" />
+                    </div>
+                </div>
+            }
+        }
+
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+            }
+
+<div>
+    @Html.ActionLink("Back to Item List", "Index", new { page = this.ViewBag.page, idItemType = this.ViewBag.idItemType, pageSiz = this.ViewBag.pageSize })
+</div>
+

@@ -1,0 +1,194 @@
+﻿@*<!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>@ViewBag.Title - My ASP.NET Application</title>
+        @Styles.Render("~/Content/css")
+        @Scripts.Render("~/bundles/modernizr")
+    </head>
+    <body>
+        <div class="navbar navbar-inverse navbar-fixed-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    @Html.ActionLink("Application name", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+                </div>
+                <div class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav">
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container body-content">
+            @RenderBody()
+            <hr />
+            <footer>
+                <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
+            </footer>
+        </div>
+
+        @Scripts.Render("~/bundles/jquery")
+        @Scripts.Render("~/bundles/bootstrap")
+        @RenderSection("scripts", required: false)
+    </body>
+    </html>*@
+
+
+@using Procurement.Service.Interface.Users;
+@using Procurement.Service.Users;
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - My ASP.NET Application</title>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+
+    @Styles.Render("~/Content/css")
+
+    @Styles.Render("~/Themes/Default/Content/color.css")
+    @Styles.Render("~/Themes/Default/Content/helper.css")
+    @Styles.Render("~/Themes/Default/Content/theme.css")
+
+    @Scripts.Render("~/bundles/modernizr")
+
+    @Scripts.Render("~/Themes/Default/Scripts/theme.js")
+
+
+    @{
+        string userEmail = User.Identity.Name;
+        IServiceUser serviceUser = DependencyResolver.Current.GetService<ServiceUser>();
+        Procurement.Model.Users.User user = serviceUser.GetByEmail(userEmail);
+    }
+
+
+</head>
+<body>
+
+    <div class="wrapper row-offcanvas row-offcanvas-left"  >
+
+
+        <aside class="left-section sidebar-offcanvas @(Convert.ToBoolean(ViewBag.SideCollapse) ? "collapse-left" : "")" style="background-color:firebrick;visibility:@(User.Identity.IsAuthenticated ? "visible;" : "hidden;") ">
+            <header class="header hidden-xs">
+                <a href="@Url.Action("Dashboard", "Admin", new { Area="Admin"})" class="logo" style="line-height: 30px;">
+                    Admin<br />
+                    Main Panel
+                </a>
+
+            </header>
+
+
+
+
+            <section class="sidebar" >
+
+                <ul class="sidebar-menu" >
+                    @if (!User.Identity.IsAuthenticated)
+                    {
+                        <li class="hidden-lg hidden-md">
+                            <a href="@Url.Action("Login", "Account")">
+                                <span>[[[Log in]]]</span>
+                            </a>
+                        </li>
+
+                    }
+                    else
+                    {
+                        if (User.IsInRole("Admin"))
+                        {
+
+                            <li class="">
+                                <a href="@Url.Action("Dashboard", "Admin", new { Area = "Admin" })">
+                                    <i class="glyphicon glyphicon-home"></i> <span>Dashboard</span>
+                                </a>
+                            </li>
+
+                            <li class="">
+                                <a href="@Url.Action("Index", "Item", new { Area = "Admin" })">
+                                    <i class="glyphicon glyphicon-th-list"></i> <span>Items</span>
+                                </a>
+                            </li>
+
+                            <li class="">
+                                <a href="@Url.Action("Index", "TemplateItem", new { Area = "Admin" })">
+                                    <i class="glyphicon glyphicon-th"></i> <span>Template Items</span>
+                                </a>
+                            </li>
+                            <li class="">
+                                <a href="@Url.Action("Index", "ItemType", new { Area = "Admin" })">
+                                    <i class="glyphicon glyphicon-th-large"></i> <span>Item Types</span>
+                                </a>
+                            </li>
+                            <li class="">
+                                <a href="@Url.Action("Users", "Admin", new { Area = "Admin" })">
+                                    <i class="glyphicon glyphicon-user"></i> <span>Manage Users</span>
+                                </a>
+                            </li>
+                        }
+                    }
+
+
+                    <li class="divider"></li>
+
+                   
+                    <li>
+                        <footer class="copyright">
+                            &copy; @DateTime.Now.Year - <a href="http://www.atprocure.com">wwww.atprocure.com</a>
+                        </footer>
+                    </li>
+                </ul>
+            </section>
+
+
+
+
+        </aside>
+
+        <aside class="right-section" style="padding-left:10px;padding-right:10px;">
+            <header class="header">
+                <nav class="navbar navbar-static-top user-nav" role="navigation">
+                    <a href="#" class="navbar-btn sidebar-toggle" data-toggle="offcanvas" role="button" style="visibility:@(User.Identity.IsAuthenticated ? "visible;" : "hidden;")">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </a>
+
+                    <label style="color:#263238;font-size: 25px;padding-top:12px">@@Procure</label>
+                    <div class="navbar-right">
+                        @Html.Partial("_LoginPartial")
+                    </div>
+                </nav>
+            </header>
+
+
+
+
+
+            <section class="content">
+                @RenderBody()
+            </section>
+        </aside>
+
+
+    </div>
+
+
+
+
+
+
+
+
+</body>
+</html>

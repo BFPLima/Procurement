@@ -1,0 +1,215 @@
+﻿@model PagedList.IPagedList<Item>
+@using PagedList.Mvc;
+@using Procurement.Model.Entities;
+
+
+@{
+    ViewBag.Title = "Index";
+    this.Layout = null;
+    IEnumerable<string> listHeader = (IEnumerable<string>)this.ViewBag.ListHeader;
+    // List<List<Procurement.Model.Entities.AttributeValue>> listOfListAttributeValues = (List<List<Procurement.Model.Entities.AttributeValue>>)this.ViewBag.ListOfListAttributeValues;
+    int custumerID = this.ViewBag.CustumerID;
+    int count = 1;
+}
+
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/bootstrap")
+
+
+@Styles.Render("~/Content/css")
+
+@Styles.Render("~/Themes/Default/Content/color.css")
+@Styles.Render("~/Themes/Default/Content/helper.css")
+@Styles.Render("~/Themes/Default/Content/theme.css")
+
+@Scripts.Render("~/bundles/modernizr")
+
+@Scripts.Render("~/Themes/Default/Scripts/theme.js")
+
+
+<h2 style="text-align:center;">ITEMS TO RELATE</h2>
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+
+
+    <table class="table">
+        <tr>
+            <th>
+                @*@Html.DisplayNameFor(model => model.CreatedDate)*@
+
+                <label style="font-size:17px;">Item Type:</label>
+                @Html.DropDownList("ddItemTypes", (SelectList)this.ViewBag.SelectListItemTypes, "Select ...", new { style = "width:200px;height:30px;" })
+                <label style="font-size:17px;">Items per Page:</label>
+                @Html.DropDownList("ddPageSize", (SelectList)this.ViewBag.SelectListPageSize, new { style = "width:200px;height:30px;" })
+
+            </th>
+            <th></th>
+        </tr>
+
+
+    </table>
+
+
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th id="thButtons"></th>
+                @foreach (var header in listHeader)
+                {
+                    <th>@header</th>
+                }
+
+            </tr>
+        </thead>
+        <tbody>
+
+
+            @foreach (var item in Model)
+                {
+                <tr>
+
+                    <td headers="thButtons">
+                        <span class="button-checkbox">
+                            <button type="button" class="btn" data-color="primary"></button>
+                            <input type="checkbox" class="hidden" name="item_@item.ID" />
+                        </span>
+                    </td>
+
+                    <td>
+                        @item.UNSPSC
+                    </td>
+
+                    <td>
+                        @item.Description
+                    </td>
+
+                    @foreach (KeyValuePair<string, string> value in item.AttributesAndValue)
+                    {
+                        <td>
+                            @value.Value
+                        </td>
+                    }
+                </tr>
+            }
+
+
+        </tbody>
+
+    </table>
+
+    <p>
+        <button type="submit" class="btn btn-primary">Save</button>
+    </p>
+}
+
+<br />
+
+
+    Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+
+
+    @Html.PagedListPager(Model, page => Url.Action("Relates", new { id = custumerID, @page = page, idItemType = this.ViewBag.IDItemType }))
+
+
+
+    <script>
+        $(function () {
+            $("#ddItemTypes").change(function () {
+                fireByDropDown();
+            });
+
+
+            $("#ddPageSize").change(function () {
+                fireByDropDown();
+            });
+        });
+
+
+
+
+        function fireByDropDown() {
+
+            var itemTypeID = $("#ddItemTypes").val();
+            var pageSize = $("#ddPageSize").val();
+            var id = @{@custumerID};
+
+            window.location = '/Custumer/Relates?id=' + id +'&page=@{@Model.PageNumber}&idItemType=' + itemTypeID + '&pageSize=' + pageSize;
+        }
+    </script>
+
+
+    <script>
+
+
+        $(function () {
+            $('.button-checkbox').each(function () {
+
+                // Settings
+                var $widget = $(this),
+                    $button = $widget.find('button'),
+                    $checkbox = $widget.find('input:checkbox'),
+                    color = $button.data('color'),
+                    settings = {
+                        on: {
+                            icon: 'glyphicon glyphicon-check'
+                        },
+                        off: {
+                            icon: 'glyphicon glyphicon-unchecked'
+                        }
+                    };
+
+                // Event Handlers
+                $button.on('click', function () {
+                    $checkbox.prop('checked', !$checkbox.is(':checked'));
+                    $checkbox.triggerHandler('change');
+                    updateDisplay();
+                });
+                $checkbox.on('change', function () {
+                    updateDisplay();
+                });
+
+                // Actions
+                function updateDisplay() {
+                    var isChecked = $checkbox.is(':checked');
+
+                    // Set the button's state
+                    $button.data('state', (isChecked) ? "on" : "off");
+
+                    // Set the button's icon
+                    $button.find('.state-icon')
+                        .removeClass()
+                        .addClass('state-icon ' + settings[$button.data('state')].icon);
+
+                    // Update the button's color
+                    if (isChecked) {
+                        $button
+                            .removeClass('btn-default')
+                            .addClass('btn-' + color + ' active');
+                    }
+                    else {
+                        $button
+                            .removeClass('btn-' + color + ' active')
+                            .addClass('btn-default');
+                    }
+                }
+
+                // Initialization
+                function init() {
+
+                    updateDisplay();
+
+                    // Inject the icon if applicable
+                    if ($button.find('.state-icon').length == 0) {
+                        $button.prepend('<i class="state-icon ' + settings[$button.data('state')].icon + '"></i> ');
+                    }
+                }
+                init();
+            });
+        });
+
+    </script>

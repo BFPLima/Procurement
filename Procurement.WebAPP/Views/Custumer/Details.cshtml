@@ -1,0 +1,150 @@
+﻿@model IEnumerable<CustumerOrderItem>
+
+@using Procurement.Model.Entities;
+
+@{
+    ViewBag.Title = "Details";
+    CustumerOrder order = this.ViewBag.CustumerOrder;
+}
+
+
+<div>
+
+    <h4>Order Details</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            Name:
+        </dt>
+
+        <dd>
+            @order.Name
+        </dd>
+
+        <dt>
+            Description
+        </dt>
+
+        <dd>
+            @order.Description
+        </dd>
+
+
+    </dl>
+</div>
+
+<p>
+    <button type="button" id="btnShowModalAdd" class="btn btn-primary" data-toggle="modal">Add</button>
+</p>
+<table class="table">
+    <tr>
+
+        <th>
+            UNSPSC
+        </th>
+        <th>
+            Quantity
+        </th>
+        <th>
+            Desired Delivery Date
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var custumerOrderItem in Model)
+    {
+        <tr>
+            <td>
+                @custumerOrderItem.Item.UNSPSC
+            </td>
+            <td>
+                @custumerOrderItem.Quantity
+            </td>
+            <td>
+                @custumerOrderItem.DesiredDateDelivery.ToShortDateString()
+            </td>
+
+            <td>
+                <button type="button" class="btn btn-info btn-order-item-listing" data-toggle="modal" data-id="@custumerOrderItem.ID">Item Listing</button>
+                |
+                <button type="button" class="btn btn-info btn-edit" data-toggle="modal" data-id="@custumerOrderItem.ID">Edit</button>
+                |
+
+                <button type="button" class="btn btn-danger btn-delete" data-toggle="modal" data-id="@custumerOrderItem.ID">Delete</button>
+            </td>
+
+        </tr>
+    }
+
+</table>
+
+
+<div>
+    @Html.ActionLink("Back to Orders", "Orders", new { id = order.CustumerInfo.User.ID })
+</div>
+
+
+
+<div class="modal fade" id="divModalAddItem" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog" style="width:80%;height:80%;" width="80%" height="80%">
+        <div class="modal-content" style="width:100%;height:100%;" width="100%" height="100%">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">×</button>
+                <h4 class="modal-title" id="myModalLabel">Add Item</h4>
+            </div>
+            <div class="modal-body" style="width:100%;height:100%;" width="100%" height="100%">
+
+
+                <iframe frameborder="0" style=" width:100%;height:90%;" width="100%" height="90%" src="/Custumer/Relates/@order.ID" />
+
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+
+
+    <script>
+
+
+        $(document).ready(function () {
+
+            $('#btnShowModalAdd').click(function () {
+                $('#divModalAddItem').modal();
+
+            });
+
+            $('#divModalAddItem').on('dialogclose', function () {
+                alert('dd');
+                window.location = '/Custumer/Details/@order.ID';
+            });
+
+            $(".btn-delete").click(function () {
+                var id = $(this).attr("data-id");
+                window.location = '/Custumer/DeleteOrderItem/' + id;
+            });
+
+
+            $(".btn-edit").click(function () {
+                var id = $(this).attr("data-id");
+                window.location = '/Custumer/EditOrderItem/' + id;
+            });
+
+            $(".btn-order-item-listing").click(function () {
+                var id = $(this).attr("data-id");
+                window.location = '/Custumer/OrderItemListing/' + id;
+            });
+
+            //
+
+        });
+
+
+    </script>
+}
+

@@ -1,0 +1,21 @@
+﻿@using Procurement.Model.Entities;
+
+
+@{
+    ViewBag.Title = "Index";
+
+    List<SupplierOffer> listOffers = this.ViewBag.ListOffers;
+}
+
+<h2>Index</h2>
+
+
+<table>
+
+    @foreach (var item in listOffers)
+    {
+        <tr><td>@item.Price</td></tr>
+    }
+
+</table>
+

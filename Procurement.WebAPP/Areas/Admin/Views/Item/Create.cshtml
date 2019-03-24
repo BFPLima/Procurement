@@ -1,0 +1,140 @@
+﻿@model Procurement.Model.Entities.Item
+
+@{
+    ViewBag.Title = "Create";
+}
+
+@*http://www.randomsnippets.com/2008/02/21/how-to-dynamically-add-form-elements-via-javascript/*@
+
+
+<h2>Create</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <h4>Item</h4>
+        <hr />
+
+
+        <div class="form-group">
+            <label class="control-label col-md-2">Item Type:</label>
+            <div class="col-md-10">
+                @Html.DropDownList("ddItemTypes", (SelectList)this.ViewBag.SelectListItemTypes, "Select ...", new { style = "width:200px;height:30px;" })
+            </div>
+        </div>
+
+
+        <div class="form-group">
+            <label class="control-label col-md-2">Template Item:</label>
+            <div class="col-md-10">
+                @*@Html.DropDownList("ddTemplateItems", (SelectList)this.ViewBag.SelectListTemplateItemss, "Select ...", new { style = "width:200px;height:30px;" })*@
+                <select id="ddTemplateItems" name="ddTemplateItems" style="width:200px;height:30px;"></select>
+            </div>
+        </div>
+
+        <div id="divFields">
+
+            <div class="form-group">
+                <label class="control-label col-md-2">UNSPSC:</label>
+                <div class="col-md-10">
+                    <input type="text" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label col-md-2">Description:</label>
+                <div class="col-md-10">
+                    <input type="text" />
+                </div>
+            </div>
+
+
+
+
+
+        </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input id="btnCreate" type="submit" value="Create" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        $("#ddItemTypes").change(function () {
+            $("#ddTemplateItems").empty();
+            $("#divFields").empty();
+
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("GetTemplateItems")',
+                dataType: 'json',
+                data: { itemTypeID: $("#ddItemTypes").val() },
+                success: function (templateItems) {
+
+                    $.each(templateItems, function (i, templateItem) {
+                        $("#ddTemplateItems").append('<option value="'
++ templateItem.Value + '">'
++ templateItem.Text + '</option>');
+                    });
+                },
+                error: function (ex) {
+                    alert('Failed to retrieve Template Items.' + ex);
+                }
+            });
+            return false;
+        });
+
+
+
+        $("#ddTemplateItems").change(function () {
+
+            $("#divFields").empty();
+
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("GetHtmlTemplateAttributes")',
+                dataType: 'html',
+                data: { templateItemID: $("#ddTemplateItems").val() },
+                success: function (result) {
+
+                    //$("#divFields").html(result);
+                    $(result).appendTo($("#divFields"));
+                },
+                error: function (ex) {
+                    alert('Failed to retrieve Template Items.' + ex);
+                }
+            });
+            return false;
+        });
+
+
+    });
+</script>

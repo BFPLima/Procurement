@@ -1,0 +1,58 @@
+﻿@model Procurement.Model.Entities.Item
+
+@{
+    ViewBag.Title = "Delete";
+
+    bool hasRelationOffers = this.ViewBag.hasRelationOffers;
+
+
+    bool hasRelationOrders = this.ViewBag.hasRelationOrders;
+
+}
+<h2>Delete</h2>
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <h4>Item</h4>
+    <hr />
+    <dl class="dl-horizontal">
+
+        @foreach (KeyValuePair<string, string> item in Model.AttributesAndValue)
+        {
+
+
+            <dt>
+                @item.Key
+            </dt>
+
+            <dd>
+               @item.Value
+            </dd>
+
+        }
+
+
+    </dl>
+
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+          
+
+            @if (hasRelationOffers)
+            {
+                <div class="bg-warning text-white">This Item can not be deleted because it has Relationship with Supplier Offers</div>
+            }
+
+            @if (hasRelationOrders)
+            {
+                <div class="bg-warning text-white">This Item can not be deleted because it has Relationship with Custumers Orders</div>
+            }
+
+            <input type="submit" value="Delete" class="btn btn-default" @(hasRelationOffers || hasRelationOrders ? "disabled" : "" )/> |
+            @Html.ActionLink("Back to Item List", "Index", new { page = this.ViewBag.page, idItemType = this.ViewBag.idItemType, pageSiz = this.ViewBag.pageSize })
+        </div>
+    }
+</div>

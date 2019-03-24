@@ -1,0 +1,130 @@
+﻿@model Procurement.WebAPP.Models.UserRegistreViewModel
+
+@{
+    ViewBag.Title = "Registre";
+}
+
+<h2>Registre</h2>
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <h4>Get registred now and use the more powerful tool in procurement system...</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+
+        <div class="col-md-5">
+
+
+            <div class="form-group">
+
+                <label class="control-label col-md-3">Are you ?</label>
+                <div class="col-md-3">
+                    @Html.RadioButtonFor(model => model.UserType, 2, new { id = 2, name = "rbtnUserType", @checked = true })
+                    <label for="2">Custumer</label>
+                </div>
+                <div class="col-md-3">
+                    @Html.RadioButtonFor(model => model.UserType, 3, new { id = 3, name = "rbtnUserType" })
+                    <label for="3">Supplier</label>
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Login, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Login, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Login, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Password, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+       
+                <label class = "control-label col-md-2" >Confirm password</label>
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.PasswordConfirm, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.PasswordConfirm, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label col-md-2">Confirm email</label>
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.EmailConfirm, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.EmailConfirm, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+
+
+        </div>
+
+
+        <div class="col-md-7">
+            <img id="img-Supplier" src="~/Content/Images/Login/SupplierLogin.JPG" class="img-circle" alt="Supplier" width="500" height="300" style="display:none;">
+            <img id="img-custumer" src="~/Content/Images/Login/CustomerLogin.jpg" class="img-circle" alt="Custumer" width="500" height="300">
+
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Registre" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/jqueryval")
+
+
+    <script>
+        $(document).ready(function () {
+
+            $('input[type=radio][id=2]').change(function () {
+                //Custumer
+                $('#img-custumer').show();
+                $('#img-Supplier').hide();
+            });
+
+            $('input[type=radio][id=3]').change(function () {
+                //Supplier
+                $('#img-custumer').hide();
+                $('#img-Supplier').show();
+            });
+        });
+    </script>
+
+}
+
+

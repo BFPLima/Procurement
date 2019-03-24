@@ -1,0 +1,210 @@
+﻿@model PagedList.IPagedList<Item>
+
+@using PagedList.Mvc;
+@using Procurement.Model.Entities;
+
+
+@{
+    ViewBag.Title = "Index";
+    IEnumerable<string> listHeader = (IEnumerable<string>)this.ViewBag.ListHeader;
+
+
+}
+
+
+<h2 style="text-align:center;">ITEMS CATALOG</h2>
+<hr />
+
+
+<p>
+    <button type="button" class="btn btn-primary" data-toggle="modal" onclick="window.location='/Admin/Item/Create';">Add</button>@*data-target="#divModalAddItem"*@
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @*@Html.DisplayNameFor(model => model.CreatedDate)*@
+
+
+
+            <label style="font-size:17px;">Item Type:</label>
+            @Html.DropDownList("ddItemTypes", (SelectList)this.ViewBag.SelectListItemTypes, "Select ...", new { style = "width:200px;height:30px;" })
+            <label style="font-size:17px;">Items per Page:</label>
+            @Html.DropDownList("ddPageSize", (SelectList)this.ViewBag.SelectListPageSize, new { style = "width:200px;height:30px;" })
+
+
+
+
+
+
+
+
+
+
+
+
+
+        </th>
+        <th></th>
+    </tr>
+
+
+
+</table>
+
+
+<br />
+Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+
+
+@Html.PagedListPager(Model, page => Url.Action("Index", new { @page = page, idItemType = this.ViewBag.IDItemType }))
+<br />
+
+<table class="table">
+    <thead>
+        <tr>
+            <th id="thButtons">ACTIONS</th>
+            @foreach (var header in listHeader)
+            {
+                <th>@header</th>
+            }
+
+        </tr>
+    </thead>
+    <tbody>
+
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td headers="thButtons">
+                    <button type="button" class="btn btn-info btn-detail" data-id="@item.ID ">Detail</button>
+                    <button type="button" class="btn btn-info btn-edit" data-id="@item.ID ">Edit</button>
+                    <button type="button" class="btn btn-danger btn-delete" data-id="@item.ID ">Delete</button>
+                </td>
+                <td>
+                    @item.UNSPSC
+                </td>
+                <td>
+                    @item.Description
+                </td>
+
+                @foreach (KeyValuePair<string,string> attributesAndValue in item.AttributesAndValue)
+                {
+                <td>
+                    @attributesAndValue.Value
+                </td>
+
+                }
+            </tr>
+        }
+
+
+    </tbody>
+
+
+
+</table>
+
+
+
+<br />
+
+
+    Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+
+
+    @Html.PagedListPager(Model, page => Url.Action("Index", new { @page = page, idItemType = this.ViewBag.IDItemType }))
+
+
+
+
+    <div class="modal fade" id="divModalAddItem" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">×</button>
+                    <h4 class="modal-title" id="myModalLabel">Add Item to the Catalog</h4>
+                </div>
+                <div class="modal-body">
+                    <form>
+
+
+                        <div class="form-group">
+                            <label>Template Item :</label>
+                            @*@Html.DropDownList("ddTemplatetems", (SelectList)this.ViewBag.SelectListTemplateItems, "Select ...", new { style = "width:200px;height:30px;" })*@
+                        </div>
+
+                        <div class="form-group">
+                            <label for="Name">Name</label>
+                            <input type="text" class="form-control" id="Name" placeholder="Name" />
+                        </div>
+                        <div class="form-group">
+                            <label for="Description">Description</label>
+                            <input type="text" class="form-control" id="Description" placeholder="Description" />
+                        </div>
+
+
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="btnAdd" onclick="return addTemplateItem();">Create</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        $(function () {
+            $("#ddItemTypes").change(function () {
+                fireByDropDown();
+            });
+
+
+            $("#ddPageSize").change(function () {
+                fireByDropDown();
+            });
+        });
+
+        function fireByDropDown() {
+
+            var itemTypeID = $("#ddItemTypes").val();
+            var pageSize = $("#ddPageSize").val();
+
+            window.location = '/Admin/Item/Index?page=@{@Model.PageNumber}&idItemType=' + itemTypeID + '&pageSize=' + pageSize;
+        }
+    </script>
+
+
+
+    <script>
+        $(function () {
+            $(".btn-edit").click(function () {
+                var id = $(this).attr("data-id");
+                // window.location = '/admin/item/edit/' + id;
+                var itemTypeID = $("#ddItemTypes").val();
+                var pageSize = $("#ddPageSize").val();
+                window.location = '/admin/item/edit?id=' + id + '&page=@{@Model.PageNumber}&idItemType=' + itemTypeID + '&pageSize=' + pageSize;
+
+            });
+
+            $(".btn-delete").click(function () {
+                var id = $(this).attr("data-id");
+                // window.location = '/admin/item/delete/' + id;
+                var itemTypeID = $("#ddItemTypes").val();
+                var pageSize = $("#ddPageSize").val();
+                window.location = '/admin/item/delete?id=' + id + '&page=@{@Model.PageNumber}&idItemType=' + itemTypeID + '&pageSize=' + pageSize;
+
+            });
+
+            $(".btn-detail").click(function () {
+                var id = $(this).attr("data-id");
+                // window.location = '/admin/item/details/' + id;
+                var itemTypeID = $("#ddItemTypes").val();
+                var pageSize = $("#ddPageSize").val();
+                window.location = '/admin/item/details?id=' + id + '&page=@{@Model.PageNumber}&idItemType=' + itemTypeID + '&pageSize=' + pageSize;
+            });
+        });
+    </script>
+

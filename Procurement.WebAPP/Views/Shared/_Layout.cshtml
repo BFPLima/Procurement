@@ -1,0 +1,194 @@
+﻿@using Procurement.Service.Interface.Users;
+@using Procurement.Service.Users;
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - My ASP.NET Application</title>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+
+    @Styles.Render("~/Content/css")
+
+    @Styles.Render("~/Themes/Default/Content/color.css")
+    @Styles.Render("~/Themes/Default/Content/helper.css")
+    @Styles.Render("~/Themes/Default/Content/theme.css")
+
+    @Scripts.Render("~/bundles/modernizr")
+
+    @Scripts.Render("~/Themes/Default/Scripts/theme.js")
+
+
+    @{
+        string userEmail = User.Identity.Name;
+        IServiceUser serviceUser = DependencyResolver.Current.GetService<ServiceUser>();
+        Procurement.Model.Users.User user = serviceUser.GetByEmail(userEmail);
+
+        string bgColorMenu = "white";
+        string role = string.Empty;
+
+        if (User.IsInRole("Custumer"))
+        {
+            bgColorMenu = "#008080";
+            role = "Custumer";
+        }
+        else if (User.IsInRole("Supplier"))
+        {
+            bgColorMenu = "#003cb3";
+            role = "Supplier";
+        }
+
+    }
+
+
+</head>
+<body>
+
+    <div class="wrapper row-offcanvas row-offcanvas-left">
+
+
+        <aside class="left-section sidebar-offcanvas @(Convert.ToBoolean(ViewBag.SideCollapse) ? "collapse-left" : "")" style="background-color:@bgColorMenu;visibility:@(User.Identity.IsAuthenticated ? "visible;" : "hidden;")">
+            <header class="header hidden-xs">
+                <a href="@Url.Action("Index", "Home")" class="logo" style="line-height: 30px;">
+                    @role<br />
+                    Main Panel
+                </a>
+            </header>
+
+
+            <section class="sidebar">
+
+                <ul class="sidebar-menu">
+                    @if (!User.Identity.IsAuthenticated)
+                    {
+                        <li class="hidden-lg hidden-md">
+                            <a href="@Url.Action("Login", "Account")">
+                                <span>[[[Log in]]]</span>
+                            </a>
+                        </li>
+                        <li class="hidden-lg hidden-md">
+                            <a href="@Url.Action("Register", "Account")">
+                                <span>[[[Create an account]]]</span>
+                            </a>
+                        </li>
+                    }
+                    else
+                    {
+
+
+
+                        if (User.IsInRole("Custumer"))
+                        {
+                            <li class="">
+                                <a href="@Url.Action("Dashboard", "Custumer", new { Area = "" , id = user.ID})">
+                                    <i class="glyphicon glyphicon-home"></i> <span>Dashboard</span>
+                                </a>
+                            </li>
+
+                            <li class="">
+                                <a href="@Url.Action("Orders", "Custumer", new { Area = "", id= user.ID })">
+                                    <i class="glyphicon glyphicon-copy"></i> <span>Orders</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a target="_blank" href="@Url.Action("Details", "User", new {id = user.ID })">
+                                    <i class="glyphicon glyphicon-user"></i> <span>Profile</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a target="_blank" href="@Url.Action("Index", "Custumer", new {Area ="Admin" })">
+                                    <i class="glyphicon glyphicon-list-alt"></i> <span>Personal Data   </span>
+                                </a>
+                            </li>
+                        }
+                        else if (User.IsInRole("Supplier"))
+                        {
+                            <li class="">
+                                <a href="@Url.Action("Dashboard", "Supplier", new { Area = "" , id = user.ID})">
+                                    <i class="glyphicon glyphicon-home"></i> <span>Dashboard</span>
+                                </a>
+                            </li>
+                            <li class="">
+                                <a href="@Url.Action("Relates", "Supplier", new { Area = "", id = user.ID })">
+                                    <i class="glyphicon glyphicon-link"></i> <span>Relates</span>
+                                </a>
+                            </li>
+                            <li class="">
+                                <a href="@Url.Action("Offers", "Supplier", new { Area = "", id= user.ID })">
+                                    <i class="glyphicon glyphicon-usd"></i> <span>Offers</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a target="_blank" href="@Url.Action("Details", "User", new {id = user.ID })">
+                                    <i class="glyphicon glyphicon-user"></i> <span>Profile</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a target="_blank" href="@Url.Action("Index", "Supplier", new {Area ="Admin" })">
+                                    <i class="glyphicon glyphicon-list-alt"></i> <span>Personal Data   </span>
+                                </a>
+                            </li>
+                        }
+                    }
+
+
+                    <li class="divider"></li>
+
+                    <li class="">
+                        <a href="@Url.Action("Contact", "Home")"><i class="glyphicon glyphicon-envelope"></i>Contact us</a>
+                    </li>
+                    <li>
+                        <footer class="copyright">
+                            &copy; @DateTime.Now.Year - <a href="http://www.atprocure.com">wwww.atprocure.com</a>
+                        </footer>
+                    </li>
+                </ul>
+            </section>
+
+
+
+
+        </aside>
+
+        <aside class="right-section" style="padding-left:10px;padding-right:10px;">
+            <header class="header">
+                <nav class="navbar navbar-static-top user-nav" role="navigation">
+                    <a href="#" class="navbar-btn sidebar-toggle" data-toggle="offcanvas" role="button" style="visibility:@(User.Identity.IsAuthenticated ? "visible;" : "hidden;")">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </a>
+
+                    <label style="color:#263238;font-size: 25px;padding-top:12px">@@Procure</label>
+                    <div class="navbar-right">
+                        @Html.Partial("_LoginPartial")
+                    </div>
+                </nav>
+            </header>
+
+
+
+
+
+            <section class="content">
+                @RenderBody()
+            </section>
+        </aside>
+
+
+    </div>
+
+
+
+
+
+
+
+
+</body>
+</html>

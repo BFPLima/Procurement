@@ -1,0 +1,4 @@
+﻿1- Add-Migration -projectName Procurement.Repository.EF AddedUsersInfos
+2- Update-Database
+3- Update-Database –TargetMigration: $InitialDatabase
+4- Enable-Migrations

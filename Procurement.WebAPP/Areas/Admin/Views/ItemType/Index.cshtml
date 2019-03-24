@@ -1,0 +1,178 @@
+﻿@model IEnumerable<Procurement.Model.Entities.ItemType>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2 style="text-align:center;">ITEM TYPES</h2>
+<hr />
+
+<p>
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#divModalAddItemType">Add</button>
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Description)
+        </th>
+
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Description)
+            </td>
+
+            <td>
+                <button type="button" class="btn btn-info btn-edit" data-id="@item.ID">Edit</button>
+                <button type="button" class="btn btn-danger" onclick="return deleleItemType(@item.ID);">Delete</button>
+            </td>
+        </tr>
+    }
+
+</table>
+
+
+<div class="modal fade" id="divModalAddItemType" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">×</button>
+                <h4 class="modal-title" id="myModalLabel">Add Item Type</h4>
+            </div>
+            <div class="modal-body">
+                <form>
+
+                    <div class="form-group">
+                        <label for="Name">Name</label>
+                        <input type="text" class="form-control" id="Name" placeholder="Name" />
+                    </div>
+                    <div class="form-group">
+                        <label for="Description">Description</label>
+                        <input type="text" class="form-control" id="Description" placeholder="Description" />
+                    </div>
+
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="btnAdd" onclick="return addItemType();">Create</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@section Scripts    {
+
+
+
+    <script>
+
+        function addItemType() {
+            var res = validate();
+            if (res == false) {
+                return false;
+            }
+
+            var itemType = {
+
+                name: $('#Name').val(),
+                description: $('#Description').val()
+            };
+
+
+            $.ajax({
+                url: "/Admin/ItemType/Create",
+                data: JSON.stringify(itemType),
+                type: "POST",
+                contentType: "application/json;charset=utf-8",
+                dataType: "json",
+                success: function (result) {
+
+                    $('#divModalAddItemType').modal('hide');
+                    alert('Item Type was included with success!');
+                    window.location.reload();
+                },
+                error: function (errormessage) {
+                    alert(errormessage.responseText);
+                }
+            });
+        }
+
+        function validate() {
+            var isValid = true;
+            if ($('#Name').val().trim() == "") {
+                $('#Name').css('border-color', 'Red');
+                isValid = false;
+            }
+            else {
+                $('#Name').css('border-color', 'lightgrey');
+            }
+
+            if ($('#Description').val().trim() == "") {
+                $('#Description').css('border-color', 'Red');
+                isValid = false;
+            }
+            else {
+                $('#Description').css('border-color', 'lightgrey');
+            }
+
+            return isValid;
+        }
+
+        function deleleItemType(ID) {
+            var ans = confirm("Are you sure you want to delete this Item Type ?");
+            if (ans) {
+
+                var itemType = {
+                    itemTypeID: ID
+                };
+
+
+                $.ajax({
+                    url: "/Admin/ItemType/Delete",
+                    type: "POST",
+                    data: JSON.stringify(itemType),
+                    contentType: "application/json;charset=UTF-8",
+                    dataType: "json",
+                    success: function (result) {
+                        window.location.reload();
+                    },
+                    error: function (errormessage) {
+                        alert(errormessage.responseText);
+                    }
+                });
+            }
+        }
+
+
+
+
+    </script>
+
+
+
+<script>
+    $(function () {
+        $(".btn-edit").click(function () {
+              var id = $(this).attr("data-id");             
+              window.location = '/admin/itemType/edit/' + id;
+          });
+ 
+      });
+</script>
+}
+
+
